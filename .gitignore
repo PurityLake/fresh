@@ -52,6 +52,7 @@ Mkfile.old
 dkms.conf
 
 build/
+include/fresh_config.h
 
 CMakeLists.txt.user
 CMakeCache.txt

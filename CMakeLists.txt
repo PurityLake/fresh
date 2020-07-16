@@ -12,5 +12,5 @@ set(SOURCES
 
 add_executable(fresh "${SOURCES}")
 
-target_include_directories(fresh PUBLIC "${PROJECT_INCLUDE_DIR}/include")
-configure_file(fresh_config.h.in fresh_config.h)
+target_include_directories(fresh PUBLIC ./include)
+configure_file(fresh_config.h.in "${PROJECT_SOURCE_DIR}/include/fresh_config.h")

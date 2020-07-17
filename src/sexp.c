@@ -1,5 +1,6 @@
 #include "sexp.h"
 
+#include <assert.h>
 #include <string.h>
 
 /**
@@ -22,6 +23,9 @@ extern struct sexp_array *create_sexp_array(size_t size) {
 }
 
 void add_to_sexp_array(struct sexp_array **array, struct sexp *elem) {
+    assert(array != NULL);
+    assert(*array != NULL);
+    assert(elem != NULL);
     if (++(*array)->num_elems > (*array)->length) {
         (*array)->length += 10;
         (*array)->sexps = (struct sexp **)realloc((*array)->sexps, sizeof(struct sexp *) * (*array)->length);
@@ -30,6 +34,8 @@ void add_to_sexp_array(struct sexp_array **array, struct sexp *elem) {
 }
 
 struct sexp *pop_front_sexp_array(struct sexp_array **array) {
+    assert(array != NULL);
+    assert(*array != NULL);
     if ((*array)->num_elems > 0) {
         struct sexp *elem = (*array)->sexps[0];
         for (size_t i = 1; i < (*array)->length; ++i) {
@@ -41,21 +47,22 @@ struct sexp *pop_front_sexp_array(struct sexp_array **array) {
     return create_empty_sexp();
 }
 
-BOOL is_empty_sexp_array(struct sexp_array *list) {
-    return list->num_elems == 0 ? TRUE : FALSE;
+BOOL is_empty_sexp_array(struct sexp_array *array) {
+    assert(array != NULL);
+    return array->num_elems == 0 ? TRUE : FALSE;
 }
 
 void free_sexp_array(struct sexp_array **list) {
-    if (list != NULL && *list != NULL) {
-        for (size_t i = 0; i < (*list)->num_elems; ++i) {
-            free_sexp(&(*list)->sexps[i]);
-            (*list)->sexps[i] = NULL;
-        }
-        free((*list)->sexps);
-        (*list)->sexps = NULL;
-        free(*list);
-        *list = NULL;
+    assert(list != NULL);
+    assert(*list != NULL);
+    for (size_t i = 0; i < (*list)->num_elems; ++i) {
+        free_sexp(&(*list)->sexps[i]);
+        (*list)->sexps[i] = NULL;
     }
+    free((*list)->sexps);
+    (*list)->sexps = NULL;
+    free(*list);
+    *list = NULL;
 }
 
 /**
@@ -68,6 +75,7 @@ struct sexp *create_empty_sexp() {
 }
 
 struct sexp *create_string_sexp(const char *str) {
+    assert(str != NULL);
     struct sexp *s = create_empty_sexp();
     size_t size = strlen(str);
     s->str = (char *)malloc(sizeof(char) * size);
@@ -77,6 +85,7 @@ struct sexp *create_string_sexp(const char *str) {
 }
 
 struct sexp *create_ident_sexp(const char *name) {
+    assert(name != NULL);
     struct sexp *s = create_empty_sexp();
     size_t size = strlen(name);
     s->name = (char *)malloc(sizeof(char) * size);
@@ -114,26 +123,33 @@ struct sexp *create_list_sexp(size_t size) {
 }
 
 BOOL is_empty_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_EMPTY ? TRUE : FALSE;
 }
 
 BOOL is_string_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_STRING ? TRUE : FALSE;
 }
 
 BOOL is_ident_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_IDENT ? TRUE : FALSE;
 }
 BOOL is_int_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_INT ? TRUE : FALSE;
 }
 BOOL is_float_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_FLOAT ? TRUE : FALSE;
 }
 BOOL is_list_sexp(const struct sexp *s) {
+    assert(s != NULL);
     return s->type == SEXP_LIST ? TRUE : FALSE;
 }
 BOOL is_empty_list_sexp(const struct sexp *s) {
+    assert(s != NULL);
     if (s->type == SEXP_LIST) {
         return is_empty_sexp_array(s->list);
     }
@@ -141,21 +157,21 @@ BOOL is_empty_list_sexp(const struct sexp *s) {
 }
 
 void free_sexp(struct sexp **s) {
-    if (s != NULL && *s != NULL) {
-        switch ((*s)->type) {
-            case SEXP_LIST:
-                free_sexp_array(&(*s)->list);
-                break;
-            case SEXP_STRING:
-                free((*s)->str);
-                break;
-            case SEXP_IDENT:
-                free((*s)->name);
-                break;
-            default:
-                break;
-        }
-        free(*s);
-        *s = NULL;
+    assert(s != NULL);
+    assert(*s != NULL);
+    switch ((*s)->type) {
+        case SEXP_LIST:
+            free_sexp_array(&(*s)->list);
+            break;
+        case SEXP_STRING:
+            free((*s)->str);
+            break;
+        case SEXP_IDENT:
+            free((*s)->name);
+            break;
+        default:
+            break;
     }
+    free(*s);
+    *s = NULL;
 }

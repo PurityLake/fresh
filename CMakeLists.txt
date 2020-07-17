@@ -19,4 +19,4 @@ add_library(fresh "${LIB_SOURCES}")
 
 target_include_directories(freshi PUBLIC "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(fresh PUBLIC "${PROJECT_SOURCE_DIR}/include")
-configure_file(fresh_config.h.in "${PROJECT_SOURCE_DIR}/include/fresh_config.h")
+configure_file(fresh_config.h.in "${PROJECT_SOURCE_DIR}/include/fresh/fresh_config.h")

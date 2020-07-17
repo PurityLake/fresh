@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "fresh.h"
+#include "fresh/fresh.h"
 
 int main(int argc, char **argv) {
     printf("Hello Fresh v%d.%d!\n", FRESH_VERSION_MAJOR, FRESH_VERSION_MINOR);

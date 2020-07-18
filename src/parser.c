@@ -7,18 +7,18 @@
 #include <string.h>
 
 typedef struct {
-    sexp *s;
+    Sexp *s;
     size_t read_to;
 } sexp_with_idx;
 
-sexp_with_idx *parse_string(char *line, int pos) {
+sexp_with_idx *parse_string(String line, int pos) {
     int idx = 0;
     int capacity = 5;
-    char *str = (char *)malloc(sizeof(char) * capacity);
+    String str = (String )malloc(sizeof(char) * capacity);
     for (size_t i = pos; i < strlen(line); ++i, ++idx) {
         if (idx >= capacity) {
             capacity += 64;
-            str = (char *)realloc(str, capacity);
+            str = (String )realloc(str, capacity);
         }
         if (line[i] == '"') {
             if (idx > 0) {
@@ -27,7 +27,7 @@ sexp_with_idx *parse_string(char *line, int pos) {
                 } else {
                     sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
                     swi->read_to = i;
-                    str = (char *)realloc(str, idx);
+                    str = (String )realloc(str, idx);
                     str[idx] = '\0';
                     swi->s = create_string_sexp(str);
                     free(str);
@@ -40,7 +40,7 @@ sexp_with_idx *parse_string(char *line, int pos) {
     }
 }
 
-void translate_to_ident_or_num(sexp **s, char *str) {
+void translate_to_ident_or_num(Sexp **s, String str) {
     BOOL is_int = FALSE;
     BOOL is_float = FALSE;
     int count_decimal = 0;
@@ -71,9 +71,9 @@ void translate_to_ident_or_num(sexp **s, char *str) {
     }
 }
 
-sexp_with_idx *parse_sexp(char *line, int pos) {
-    sexp *s = create_list_sexp(10);
-    char *str = (char *)malloc(sizeof(char) * 100);
+sexp_with_idx *parse_sexp(String line, int pos) {
+    Sexp *s = create_list_sexp(10);
+    String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
     size_t i;
     for (i = pos; i < strlen(line); ++i) {
@@ -119,10 +119,10 @@ sexp_with_idx *parse_sexp(char *line, int pos) {
     return swi; 
 }
 
-sexp *parse_line(char *line) {
-    sexp *s = create_list_sexp(10);
+Sexp *parse_line(String line) {
+    Sexp *s = create_list_sexp(10);
     BOOL first = TRUE;
-    char *str = (char *)malloc(sizeof(char) * 100);
+    String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
     for (size_t i = 0; i < strlen(line); ++i) {
         if (line[i] == '(') {

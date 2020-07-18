@@ -5,14 +5,15 @@
 
 int main(int argc, char **argv) {
     printf("Hello Fresh v%d.%d!\n", FRESH_VERSION_MAJOR, FRESH_VERSION_MINOR);
-    sexp *total = parse_line("(1 1.2 (\"hello\" + 3.2 1))");
-    sexp *s1 = create_empty_sexp();
-    sexp *s2 = create_string_sexp("hello world from sexp!");
-    sexp *s3 = create_int_sexp(10);
-    sexp *s4 = create_float_sexp(42.0f);
-    sexp *s5 = create_empty_list_sexp();
-    sexp *s6 = create_list_sexp(5);
-    sexp *s7 = create_ident_sexp("ident");
+
+    Sexp *total = parse_line("(print \"Hello World!\")");
+    Sexp *s1 = create_empty_sexp();
+    Sexp *s2 = create_string_sexp("hello world from sexp!");
+    Sexp *s3 = create_int_sexp(10);
+    Sexp *s4 = create_float_sexp(42.0f);
+    Sexp *s5 = create_empty_list_sexp();
+    Sexp *s6 = create_list_sexp(5);
+    Sexp *s7 = create_ident_sexp("ident");
 
     assert(is_empty_sexp(s1) == TRUE);
     assert(is_string_sexp(s2) == TRUE);
@@ -38,5 +39,6 @@ int main(int argc, char **argv) {
     assert(s5 == NULL);
     assert(s6 == NULL);
     assert(s7 == NULL);
+
     return 0;
 }

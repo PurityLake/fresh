@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "fresh/fresh.h"
 
@@ -8,45 +10,34 @@ int main(int argc, char **argv) {
 
     //Sexp *total = parse_line("(println \"Hello World!\" 1 2.3 ident)");
     //Sexp *out = eval(total);
-    printf("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)\n");
-    Sexp *total = parse_line("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)");
-    Sexp *result = eval(total);
-    printf("(+ 1 2 (+ 3 4 (+ 5 6)))\n");
-    total = parse_line("(+ 1 2 (+ 3 4 (+ 5 6)))");
-    result = eval(total);
-    printf("%ld\n", result->i);
-    Sexp *s1 = create_empty_Sexp();
-    Sexp *s2 = create_string_Sexp("hello world from sexp!");
-    Sexp *s3 = create_int_Sexp(10);
-    Sexp *s4 = create_float_Sexp(42.0f);
-    Sexp *s5 = create_empty_list_Sexp();
-    Sexp *s6 = create_list_Sexp(5);
-    Sexp *s7 = create_ident_Sexp("ident");
+    //("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)\n");
+    //Sexp *total = parse_line("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)");
+    //Sexp *result = eval(total);
+    //printf("(+ 1 2 (+ 3 4 (+ 5 6)))\n");
+    //total = parse_line("(+ 1 2 (+ 3 4 (+ 5 6)))");
+    //result = eval(total);
+    //printf("%ld\n", result->i);
 
-    assert(is_empty_Sexp(s1) == TRUE);
-    assert(is_string_Sexp(s2) == TRUE);
-    assert(is_int_Sexp(s3) == TRUE);
-    assert(is_float_Sexp(s4) == TRUE);
-    assert(is_empty_list_Sexp(s5) == TRUE);
-    assert(is_list_Sexp(s6) == TRUE);
-    assert(is_ident_Sexp(s7) == TRUE);
+    char *buffer;
+    size_t bufsize = 128;
+    size_t characters;
 
-    free_Sexp(&s1);
-    free_Sexp(&s2);
-    free_Sexp(&s3);
-    free_Sexp(&s4);
-    free_Sexp(&s5);
-    free_Sexp(&s6);
-    free_Sexp(&s7);
-    free_Sexp(&total);
+    buffer = (char *)malloc(sizeof(char) * bufsize);
 
-    assert(s1 == NULL);
-    assert(s2 == NULL);
-    assert(s3 == NULL);
-    assert(s4 == NULL);
-    assert(s5 == NULL);
-    assert(s6 == NULL);
-    assert(s7 == NULL);
+    while (TRUE) {
+        memset(buffer, '\0', bufsize);
+        printf("> ");
+        characters = getline(&buffer, &bufsize, stdin);
+        buffer[characters-1] = '\0';
+        if (strcmp(buffer, "quit") == 0) {
+            break;
+        }
+        Sexp *total = parse_line(buffer);
+        Sexp *result = eval(total);
+        if (!is_empty_Sexp(result)) {
+            println_fn(result);
+        }
+    }
 
     return 0;
 }

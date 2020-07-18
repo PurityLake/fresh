@@ -18,60 +18,60 @@ enum sexp_type {
     SEXP_EMPTY
 };
 
-struct sexp_array;
+typedef struct _sexp_array sexp_array;
 
-struct sexp {
+typedef struct {
     union {
         int i;
         float f;
         char *str;
         char *name;
-        struct sexp_array *list;
+        sexp_array *list;
     };
     enum sexp_type type;
-};
+} sexp;
 
-struct sexp_array {
+typedef struct _sexp_array {
     size_t num_elems;
     size_t length;
-    struct sexp **sexps;
-};
+    sexp **sexps;
+} sexp_array;
 
 /**
- * struct sexp_array functions
+ * sexp_array functions
  */
-extern struct sexp_array *create_zero_len_sexp_array();
-extern struct sexp_array *create_sexp_array(size_t size);
+extern sexp_array *create_zero_len_sexp_array();
+extern sexp_array *create_sexp_array(size_t size);
 
-extern void add_to_sexp_array(struct sexp_array **array, struct sexp *elem);
-extern struct sexp *pop_front_sexp_array(struct sexp_array **array);
+extern void add_to_sexp_array(sexp_array **array, sexp *elem);
+extern sexp *pop_front_sexp_array(sexp_array **array);
 
-extern BOOL is_empty_sexp_array(struct sexp_array *list);
+extern BOOL is_empty_sexp_array(sexp_array *list);
 
-extern void free_sexp_array(struct sexp_array **list);
+extern void free_sexp_array(sexp_array **list);
 
 /**
- * struct sexp functions
+ * sexp functions
  */
-extern struct sexp *create_empty_sexp();
-extern struct sexp *create_string_sexp(const char *str);
-extern struct sexp *create_ident_sexp(const char *name);
-extern struct sexp *create_int_sexp(int i);
-extern struct sexp *create_float_sexp(float f);
-extern struct sexp *create_empty_list_sexp();
-extern struct sexp *create_list_sexp(size_t size);
+extern sexp *create_empty_sexp();
+extern sexp *create_string_sexp(const char *str);
+extern sexp *create_ident_sexp(const char *name);
+extern sexp *create_int_sexp(int i);
+extern sexp *create_float_sexp(float f);
+extern sexp *create_empty_list_sexp();
+extern sexp *create_list_sexp(size_t size);
 
-extern void add_to_list_sexp(struct sexp **s, struct sexp *obj);
+extern void add_to_list_sexp(sexp **s, sexp *obj);
 
-extern BOOL is_empty_sexp(const struct sexp *s);
-extern BOOL is_string_sexp(const struct sexp *s);
-extern BOOL is_ident_sexp(const struct sexp *s);
-extern BOOL is_int_sexp(const struct sexp *s);
-extern BOOL is_float_sexp(const struct sexp *s);
-extern BOOL is_list_sexp(const struct sexp *s);
-extern BOOL is_empty_list_sexp(const struct sexp *s);
+extern BOOL is_empty_sexp(const sexp *s);
+extern BOOL is_string_sexp(const sexp *s);
+extern BOOL is_ident_sexp(const sexp *s);
+extern BOOL is_int_sexp(const sexp *s);
+extern BOOL is_float_sexp(const sexp *s);
+extern BOOL is_list_sexp(const sexp *s);
+extern BOOL is_empty_list_sexp(const sexp *s);
 
-extern void free_sexp(struct sexp **s);
+extern void free_sexp(sexp **s);
 
 #ifdef __cplusplus
 }

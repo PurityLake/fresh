@@ -7,7 +7,7 @@
 #include <string.h>
 
 typedef struct {
-    struct sexp *s;
+    sexp *s;
     size_t read_to;
 } sexp_with_idx;
 
@@ -40,7 +40,7 @@ sexp_with_idx *parse_string(char *line, int pos) {
     }
 }
 
-void translate_to_ident_or_num(struct sexp **s, char *str) {
+void translate_to_ident_or_num(sexp **s, char *str) {
     BOOL is_int = FALSE;
     BOOL is_float = FALSE;
     int count_decimal = 0;
@@ -72,7 +72,7 @@ void translate_to_ident_or_num(struct sexp **s, char *str) {
 }
 
 sexp_with_idx *parse_sexp(char *line, int pos) {
-    struct sexp *s = create_list_sexp(10);
+    sexp *s = create_list_sexp(10);
     char *str = (char *)malloc(sizeof(char) * 100);
     int idx = 0;
     size_t i;
@@ -119,8 +119,8 @@ sexp_with_idx *parse_sexp(char *line, int pos) {
     return swi; 
 }
 
-struct sexp *parse_line(char *line) {
-    struct sexp *s = create_list_sexp(10);
+sexp *parse_line(char *line) {
+    sexp *s = create_list_sexp(10);
     BOOL first = TRUE;
     char *str = (char *)malloc(sizeof(char) * 100);
     int idx = 0;

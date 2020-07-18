@@ -6,7 +6,15 @@
 int main(int argc, char **argv) {
     printf("Hello Fresh v%d.%d!\n", FRESH_VERSION_MAJOR, FRESH_VERSION_MINOR);
 
-    Sexp *total = parse_line("(print \"Hello World!\")");
+    //Sexp *total = parse_line("(println \"Hello World!\" 1 2.3 ident)");
+    //Sexp *out = eval(total);
+    printf("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)\n");
+    Sexp *total = parse_line("(println 1 2 (+ 3 4 5 6) 4.2341 \"Hello World!\" ident?)");
+    Sexp *result = eval(total);
+    printf("(+ 1 2 (+ 3 4 (+ 5 6)))\n");
+    total = parse_line("(+ 1 2 (+ 3 4 (+ 5 6)))");
+    result = eval(total);
+    printf("%ld\n", result->i);
     Sexp *s1 = create_empty_Sexp();
     Sexp *s2 = create_string_Sexp("hello world from sexp!");
     Sexp *s3 = create_int_Sexp(10);

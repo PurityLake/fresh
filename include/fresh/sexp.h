@@ -71,6 +71,8 @@ extern BOOL is_float_Sexp(const Sexp *s);
 extern BOOL is_list_Sexp(const Sexp *s);
 extern BOOL is_empty_list_Sexp(const Sexp *s);
 
+extern Sexp *pop_from_front_list_Sexp(Sexp **s);
+
 extern void free_Sexp(Sexp **s);
 
 #ifdef __cplusplus

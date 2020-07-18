@@ -61,7 +61,7 @@ void free_sexp_array(SexpArray **list) {
     assert(list != NULL);
     assert(*list != NULL);
     for (size_t i = 0; i < (*list)->num_elems; ++i) {
-        free_sexp(&(*list)->sexps[i]);
+        free_Sexp(&(*list)->sexps[i]);
         (*list)->sexps[i] = NULL;
     }
     free((*list)->sexps);
@@ -73,15 +73,15 @@ void free_sexp_array(SexpArray **list) {
 /**
  * Sexp functions
  */
-Sexp *create_empty_sexp() {
+Sexp *create_empty_Sexp() {
     Sexp *s = (Sexp *)malloc(sizeof(Sexp));
     s->type = SEXP_EMPTY;
     return s;
 }
 
-Sexp *create_string_sexp(const String str) {
+Sexp *create_string_Sexp(const String str) {
     assert(str != NULL);
-    Sexp *s = create_empty_sexp();
+    Sexp *s = create_empty_Sexp();
     size_t size = strlen(str);
     s->str = (String )malloc(sizeof(char) * size);
     strcpy(s->str, str);
@@ -89,9 +89,9 @@ Sexp *create_string_sexp(const String str) {
     return s;
 }
 
-Sexp *create_ident_sexp(const String name) {
+Sexp *create_ident_Sexp(const String name) {
     assert(name != NULL);
-    Sexp *s = create_empty_sexp();
+    Sexp *s = create_empty_Sexp();
     size_t size = strlen(name);
     s->name = (String )malloc(sizeof(char) * size);
     strcpy(s->name, name);
@@ -99,68 +99,68 @@ Sexp *create_ident_sexp(const String name) {
     return s;
 }
 
-Sexp *create_int_sexp(int i) {
-    Sexp *s = create_empty_sexp();
+Sexp *create_int_Sexp(int i) {
+    Sexp *s = create_empty_Sexp();
     s->i = i;
     s->type = SEXP_INT;
     return s;
 }
 
-Sexp *create_float_sexp(float f) {
-    Sexp *s = create_empty_sexp();
+Sexp *create_float_Sexp(float f) {
+    Sexp *s = create_empty_Sexp();
     s->f = f;
     s->type = SEXP_FLOAT;
     return s;
 }
 
-Sexp *create_empty_list_sexp() {
-    Sexp *s = create_empty_sexp();
+Sexp *create_empty_list_Sexp() {
+    Sexp *s = create_empty_Sexp();
     s->list = create_zero_len_sexp_array();
     s->type = SEXP_LIST;
     return s;
 }
 
-Sexp *create_list_sexp(size_t size) {
-    Sexp *s = create_empty_sexp();
+Sexp *create_list_Sexp(size_t size) {
+    Sexp *s = create_empty_Sexp();
     s->list = create_sexp_array(size);
     s->type = SEXP_LIST;
     return s;
 }
 
-void add_to_list_sexp(Sexp **s, Sexp *obj) {
+void add_to_list_Sexp(Sexp **s, Sexp *obj) {
     assert(s != NULL);
     assert(*s != NULL);
-    assert(is_list_sexp(*s));
+    assert(is_list_Sexp(*s));
     add_to_sexp_array(&(*s)->list, obj);
 }
 
-BOOL is_empty_sexp(const Sexp *s) {
+BOOL is_empty_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_EMPTY ? TRUE : FALSE;
 }
 
-BOOL is_string_sexp(const Sexp *s) {
+BOOL is_string_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_STRING ? TRUE : FALSE;
 }
 
-BOOL is_ident_sexp(const Sexp *s) {
+BOOL is_ident_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_IDENT ? TRUE : FALSE;
 }
-BOOL is_int_sexp(const Sexp *s) {
+BOOL is_int_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_INT ? TRUE : FALSE;
 }
-BOOL is_float_sexp(const Sexp *s) {
+BOOL is_float_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_FLOAT ? TRUE : FALSE;
 }
-BOOL is_list_sexp(const Sexp *s) {
+BOOL is_list_Sexp(const Sexp *s) {
     assert(s != NULL);
     return s->type == SEXP_LIST ? TRUE : FALSE;
 }
-BOOL is_empty_list_sexp(const Sexp *s) {
+BOOL is_empty_list_Sexp(const Sexp *s) {
     assert(s != NULL);
     if (s->type == SEXP_LIST) {
         return is_empty_sexp_array(s->list);
@@ -168,7 +168,7 @@ BOOL is_empty_list_sexp(const Sexp *s) {
     return FALSE;
 }
 
-void free_sexp(Sexp **s) {
+void free_Sexp(Sexp **s) {
     assert(s != NULL);
     assert(*s != NULL);
     switch ((*s)->type) {

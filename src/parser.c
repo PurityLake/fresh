@@ -29,7 +29,7 @@ sexp_with_idx *parse_string(String line, int pos) {
                     swi->read_to = i;
                     str = (String )realloc(str, idx);
                     str[idx] = '\0';
-                    swi->s = create_string_sexp(str);
+                    swi->s = create_string_Sexp(str);
                     free(str);
                     return swi;
                 }
@@ -63,16 +63,16 @@ void translate_to_ident_or_num(Sexp **s, String str) {
         }
     }
     if (is_int) {
-        add_to_list_sexp(s, create_int_sexp(atoi(str)));
+        add_to_list_Sexp(s, create_int_Sexp(atoi(str)));
     } else if (is_float) {
-        add_to_list_sexp(s, create_float_sexp(atof(str)));
+        add_to_list_Sexp(s, create_float_Sexp(atof(str)));
     } else {
-        add_to_list_sexp(s, create_ident_sexp(str));
+        add_to_list_Sexp(s, create_ident_Sexp(str));
     }
 }
 
-sexp_with_idx *parse_sexp(String line, int pos) {
-    Sexp *s = create_list_sexp(10);
+sexp_with_idx *parse_Sexp(String line, int pos) {
+    Sexp *s = create_list_Sexp(10);
     String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
     size_t i;
@@ -83,9 +83,9 @@ sexp_with_idx *parse_sexp(String line, int pos) {
                 translate_to_ident_or_num(&s, str);
                 idx = 0;
             }
-            sexp_with_idx *swi = parse_sexp(line, i + 1);
+            sexp_with_idx *swi = parse_Sexp(line, i + 1);
             i = swi->read_to;
-            add_to_list_sexp(&s, swi->s);
+            add_to_list_Sexp(&s, swi->s);
             free(swi);
         } else if (line[i] == ')') {
             if (idx > 0) {
@@ -97,7 +97,7 @@ sexp_with_idx *parse_sexp(String line, int pos) {
         } else if (line[i] == '"') {
             sexp_with_idx *swi = parse_string(line, i + 1);
             i = swi->read_to;
-            add_to_list_sexp(&s, swi->s);
+            add_to_list_Sexp(&s, swi->s);
             free(swi);
         } else {
             if (strchr(ident_symbols, line[i]) != NULL) {
@@ -120,7 +120,7 @@ sexp_with_idx *parse_sexp(String line, int pos) {
 }
 
 Sexp *parse_line(String line) {
-    Sexp *s = create_list_sexp(10);
+    Sexp *s = create_list_Sexp(10);
     BOOL first = TRUE;
     String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
@@ -132,9 +132,9 @@ Sexp *parse_line(String line) {
                     translate_to_ident_or_num(&s, str);
                     idx = 0;
                 }
-                sexp_with_idx *swi = parse_sexp(line, i + 1);
+                sexp_with_idx *swi = parse_Sexp(line, i + 1);
                 i = swi->read_to;
-                add_to_list_sexp(&s, swi->s);
+                add_to_list_Sexp(&s, swi->s);
                 free(swi);
             }
             first = FALSE;
@@ -148,7 +148,7 @@ Sexp *parse_line(String line) {
         } else if (line[i] == '"') {
             sexp_with_idx *swi = parse_string(line, i + 1);
             i = swi->read_to;
-            add_to_list_sexp(&s, swi->s);
+            add_to_list_Sexp(&s, swi->s);
             free(swi);
         } else {
             if (strchr(ident_symbols, line[i]) != NULL) {

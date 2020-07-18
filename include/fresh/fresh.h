@@ -5,5 +5,6 @@
 #include "fresh_config.h"
 #include "sexp.h"
 #include "parser.h"
+#include "eval.h"
 
 #endif /* __H_FRESH__ */

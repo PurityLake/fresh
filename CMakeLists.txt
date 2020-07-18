@@ -7,14 +7,15 @@ project(fresh
     VERSION 0.1
     LANGUAGES C)
 
-set(SOURCES
-    ./src/sexp.c
-    ./src/parser.c
-    ./src/main.c)
-
 set(LIB_SOURCES
+    ./src/eval.c
     ./src/parser.c
     ./src/sexp.c)
+
+set(SOURCES
+    "${LIB_SOURCES}"
+    ./src/main.c)
+
 
 add_executable(freshi "${SOURCES}")
 add_library(fresh "${LIB_SOURCES}")

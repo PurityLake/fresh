@@ -3,8 +3,6 @@
 
 #include "sexp.h"
 
-Sexp *eval(Sexp *line) {
-    return NULL;
-}
+extern Sexp *eval(Sexp *line);
 
 #endif /* __H_FRESH_EVAL__ */

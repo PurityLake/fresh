@@ -63,89 +63,34 @@ void translate_to_ident_or_num(struct sexp **s, char *str) {
         }
     }
     if (is_int) {
-        add_to_list_sexp(&s, create_int_sexp(atoi(str)));
+        add_to_list_sexp(s, create_int_sexp(atoi(str)));
     } else if (is_float) {
-        add_to_list_sexp(&s, create_float_sexp(atof(str)));
+        add_to_list_sexp(s, create_float_sexp(atof(str)));
     } else {
-        add_to_list_sexp(&s, create_ident_sexp(str));
+        add_to_list_sexp(s, create_ident_sexp(str));
     }
 }
 
 sexp_with_idx *parse_sexp(char *line, int pos) {
     struct sexp *s = create_list_sexp(10);
+    char *str = (char *)malloc(sizeof(char) * 100);
+    int idx = 0;
     size_t i;
     for (i = pos; i < strlen(line); ++i) {
         if (line[i] == '(') {
+            if (idx > 0) {
+                str[idx] = '\0';
+                translate_to_ident_or_num(&s, str);
+                idx = 0;
+            }
             sexp_with_idx *swi = parse_sexp(line, i + 1);
             i = swi->read_to;
             add_to_list_sexp(&s, swi->s);
             free(swi);
         } else if (line[i] == ')') {
-            break;
-        } else if (line[i] == '"') {
-            sexp_with_idx *swi = parse_string(line, i + 1);
-            i = swi->read_to;
-            add_to_list_sexp(&s, swi->s);
-            free(swi);
-        } else {
-            
-        }
-    }
-    sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
-    swi->read_to = i;
-    swi->s = s;
-    return swi; 
-}
-
-struct sexp *parse_line(char *line) {
-    struct sexp *s = create_list_sexp(10);
-    BOOL first = TRUE;
-    char *str = (char *)malloc(sizeof(char) * 100);
-    int idx = 0;
-    for (size_t i = 0; i < strlen(line); ++i) {
-        if (line[i] == '(') {
-            if (!first) {
-                if (idx > 0) {
-                    str[idx] = '\0';
-                    idx = 0;
-                }
-                sexp_with_idx *swi = parse_sexp(line, i + 1);
-                i = swi->read_to;
-                add_to_list_sexp(&s, swi->s);
-                free(swi);
-            }
-            first = FALSE;
-        } else if (line[i] == ')') {
             if (idx > 0) {
                 str[idx] = '\0';
-                BOOL is_int = FALSE;
-                BOOL is_float = FALSE;
-                int count_decimal = 0;
-                for (int i = 0; i < strlen(str); ++i) {
-                    if (isdigit(str[i])) {
-                        if (!is_float) {
-                            is_int = TRUE;
-                        }
-                    } else if (str[i] == '.') {
-                        is_float = TRUE;
-                        is_int = FALSE;
-                        count_decimal++;
-                        if (count_decimal > 1) {
-                            is_int = FALSE;
-                            is_float = FALSE;
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                }
-                if (is_int) {
-                    add_to_list_sexp(&s, create_int_sexp(atoi(str)));
-                } else if (is_float) {
-                    add_to_list_sexp(&s, create_float_sexp(atof(str)));
-                } else {
-                    add_to_list_sexp(&s, create_ident_sexp(str));
-                }
+                translate_to_ident_or_num(&s, str);
                 idx = 0;
             }
             break;
@@ -161,34 +106,58 @@ struct sexp *parse_line(char *line) {
             } else if (isspace(line[i])) {
                 if (idx > 0) {
                     str[idx] = '\0';
-                    BOOL is_int = FALSE;
-                    BOOL is_float = FALSE;
-                    int count_decimal = 0;
-                    for (int i = 0; i < strlen(str); ++i) {
-                        if (isdigit(str[i])) {
-                            if (!is_float) {
-                                is_int = TRUE;
-                            }
-                        } else if (str[i] == '.') {
-                            is_float = TRUE;
-                            is_int = FALSE;
-                            count_decimal++;
-                            if (count_decimal > 1) {
-                                is_int = FALSE;
-                                is_float = FALSE;
-                                break;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    if (is_int) {
-                        add_to_list_sexp(&s, create_int_sexp(atoi(str)));
-                    } else if (is_float) {
-                        add_to_list_sexp(&s, create_float_sexp(atof(str)));
-                    } else {
-                        add_to_list_sexp(&s, create_ident_sexp(str));
-                    }
+                    translate_to_ident_or_num(&s, str);
+                    idx = 0;
+                }
+            }
+        }
+    }
+    sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
+    swi->read_to = i;
+    swi->s = s;
+    free(str);
+    return swi; 
+}
+
+struct sexp *parse_line(char *line) {
+    struct sexp *s = create_list_sexp(10);
+    BOOL first = TRUE;
+    char *str = (char *)malloc(sizeof(char) * 100);
+    int idx = 0;
+    for (size_t i = 0; i < strlen(line); ++i) {
+        if (line[i] == '(') {
+            if (!first) {
+                if (idx > 0) {
+                    str[idx] = '\0';
+                    translate_to_ident_or_num(&s, str);
+                    idx = 0;
+                }
+                sexp_with_idx *swi = parse_sexp(line, i + 1);
+                i = swi->read_to;
+                add_to_list_sexp(&s, swi->s);
+                free(swi);
+            }
+            first = FALSE;
+        } else if (line[i] == ')') {
+            if (idx > 0) {
+                str[idx] = '\0';
+                translate_to_ident_or_num(&s, str);
+                idx = 0;
+            }
+            break;
+        } else if (line[i] == '"') {
+            sexp_with_idx *swi = parse_string(line, i + 1);
+            i = swi->read_to;
+            add_to_list_sexp(&s, swi->s);
+            free(swi);
+        } else {
+            if (strchr(ident_symbols, line[i]) != NULL) {
+                str[idx] = line[i];
+                ++idx;
+            } else if (isspace(line[i])) {
+                if (idx > 0) {
+                    str[idx] = '\0';
+                    translate_to_ident_or_num(&s, str);
                     idx = 0;
                 }
             }

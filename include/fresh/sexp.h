@@ -5,6 +5,10 @@
 
 #include"defines.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum sexp_type {
     SEXP_IDENT = 0,
     SEXP_STRING,
@@ -28,9 +32,9 @@ struct sexp {
 };
 
 struct sexp_array {
-    struct sexp **sexps;
     size_t num_elems;
     size_t length;
+    struct sexp **sexps;
 };
 
 /**
@@ -57,6 +61,8 @@ extern struct sexp *create_float_sexp(float f);
 extern struct sexp *create_empty_list_sexp();
 extern struct sexp *create_list_sexp(size_t size);
 
+extern void add_to_list_sexp(struct sexp **s, struct sexp *obj);
+
 extern BOOL is_empty_sexp(const struct sexp *s);
 extern BOOL is_string_sexp(const struct sexp *s);
 extern BOOL is_ident_sexp(const struct sexp *s);
@@ -66,5 +72,9 @@ extern BOOL is_list_sexp(const struct sexp *s);
 extern BOOL is_empty_list_sexp(const struct sexp *s);
 
 extern void free_sexp(struct sexp **s);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __H_FRESH_SEXP__ */

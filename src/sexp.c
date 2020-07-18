@@ -1,6 +1,7 @@
 #include "fresh/sexp.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 /**
@@ -26,11 +27,12 @@ void add_to_sexp_array(struct sexp_array **array, struct sexp *elem) {
     assert(array != NULL);
     assert(*array != NULL);
     assert(elem != NULL);
-    if (++(*array)->num_elems > (*array)->length) {
+    (*array)->num_elems += 1;
+    if ((*array)->num_elems > (*array)->length) {
         (*array)->length += 10;
         (*array)->sexps = (struct sexp **)realloc((*array)->sexps, sizeof(struct sexp *) * (*array)->length);
     }
-    (*array)->sexps[(*array)->num_elems] = elem;
+    (*array)->sexps[(*array)->num_elems - 1] = elem;
 }
 
 struct sexp *pop_front_sexp_array(struct sexp_array **array) {
@@ -38,13 +40,16 @@ struct sexp *pop_front_sexp_array(struct sexp_array **array) {
     assert(*array != NULL);
     if ((*array)->num_elems > 0) {
         struct sexp *elem = (*array)->sexps[0];
-        for (size_t i = 1; i < (*array)->length; ++i) {
-            (*array)->sexps[i - 1] = (*array)->sexps[i];
+        struct sexp **list = (struct sexp **)malloc(sizeof(struct sexp *) * (*array)->length);
+        for (size_t i = 1; i < (*array)->num_elems; ++i) {
+            list[i-1] = (*array)->sexps[i];
         }
-        --(*array)->num_elems;
+        free((*array)->sexps);
+        (*array)->sexps = list;
+        (*array)->num_elems -= 1;
         return elem;
     }
-    return create_empty_sexp();
+    return NULL;
 }
 
 BOOL is_empty_sexp_array(struct sexp_array *array) {
@@ -120,6 +125,13 @@ struct sexp *create_list_sexp(size_t size) {
     s->list = create_sexp_array(size);
     s->type = SEXP_LIST;
     return s;
+}
+
+void add_to_list_sexp(struct sexp **s, struct sexp *obj) {
+    assert(s != NULL);
+    assert(*s != NULL);
+    assert(is_list_sexp(*s));
+    add_to_sexp_array(&(*s)->list, obj);
 }
 
 BOOL is_empty_sexp(const struct sexp *s) {

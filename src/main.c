@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
     free_sexp(&s5);
     free_sexp(&s6);
     free_sexp(&s7);
+    free_sexp(&total);
 
     assert(s1 == NULL);
     assert(s2 == NULL);

@@ -98,7 +98,7 @@ Error *parse_Sexp(sexp_with_idx **out, String line, int pos) {
                 translate_to_ident_or_num(&s, str);
                 idx = 0;
             }
-            sexp_with_idx *swi;
+            sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
             Error *e = parse_Sexp(&swi, line, i + 1);
             free_Error(&e);
             i = swi->read_to;
@@ -112,7 +112,7 @@ Error *parse_Sexp(sexp_with_idx **out, String line, int pos) {
             }
             break;
         } else if (line[i] == '"') {
-            sexp_with_idx *swi;
+            sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
             Error *e = parse_string(&swi, line, i + 1);
             free_Error(&e);
             i = swi->read_to;
@@ -154,7 +154,7 @@ Error *parse_line(Sexp **out, String line) {
                     translate_to_ident_or_num(&s, str);
                     idx = 0;
                 }
-                sexp_with_idx *swi = { 0 };
+                sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
                 Error *e = parse_Sexp(&swi, line, i + 1);
                 free_Error(&e);
                 i = swi->read_to;
@@ -170,7 +170,7 @@ Error *parse_line(Sexp **out, String line) {
             }
             break;
         } else if (line[i] == '"') {
-            sexp_with_idx *swi;
+            sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
             Error *e = parse_string(&swi, line, i + 1);
             free_Error(&e);
             i = swi->read_to;

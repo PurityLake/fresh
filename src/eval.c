@@ -23,7 +23,7 @@ Error *print_fn(Sexp *rest, Sexp **out) {
         Sexp *curr = { 0 };
         Error *e = pop_from_front_list_Sexp(&rest, &curr);
         free_Error(&e);
-        while(curr != NULL); {
+        while(curr != NULL) {
             switch (curr->type) {
                 case SEXP_STRING:
                     printf("%s ", curr->str);
@@ -40,12 +40,16 @@ Error *print_fn(Sexp *rest, Sexp **out) {
                 case SEXP_LIST:
                     {
                         Sexp *eval_res;
+                        e = create_empty_Sexp(&eval_res);
                         e = eval(curr, &eval_res);
                         free_Error(&e);
                         print_fn(eval_res, out);
+                        free_Sexp(&eval_res);
                         break;
                     }
             }
+            e = pop_from_front_list_Sexp(&rest, &curr);
+            free_Error(&e);
         }
     }
     Error *e = create_empty_Sexp(out);
@@ -64,11 +68,14 @@ Error *println_fn(Sexp *rest, Sexp **out) {
         free_Error(&e);
         while (curr != NULL) {
             if (is_list_Sexp(curr)) {
-                Sexp *eval_res = { 0 };
+                Sexp *eval_res;
+                e = create_empty_Sexp(&eval_res);
+                free_Error(&e);
                 e = eval(curr, &eval_res);
                 free_Error(&e);
                 e = print_fn(eval_res, out);
                 free_Error(&e);
+                free_Sexp(&eval_res);
             } else {
                 e = print_fn(curr, out);
                 free_Error(&e);

@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
     //total = parse_line("(+ 1 2 (+ 3 4 (+ 5 6)))");
     //result = eval(total);
     //printf("%ld\n", result->i);
+    Error *e;
 
     char *buffer;
     size_t bufsize = 128;
@@ -32,11 +33,18 @@ int main(int argc, char **argv) {
         if (strcmp(buffer, "quit") == 0) {
             break;
         }
-        Sexp *total = parse_line(buffer);
-        Sexp *result = eval(total);
+        Sexp *total = { 0 };
+        e = parse_line(&total, buffer);
+        Sexp *result = { 0 };
+        e = eval(total, &result);
         if (!is_empty_Sexp(result)) {
-            println_fn(result);
+            Sexp *r = { 0 };
+            e = println_fn(result, &r);
+            free_Error(&e);
+            free_Sexp(&r);
         }
+        free_Sexp(&total);
+        free_Sexp(&result);
     }
 
     return 0;

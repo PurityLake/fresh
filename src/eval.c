@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-Sexp *print_fn(Sexp *rest) {
+Error *print_fn(Sexp *rest, Sexp **out) {
     if (!is_list_Sexp(rest)) {
         switch (rest->type) {
             case SEXP_STRING:
@@ -20,8 +20,10 @@ Sexp *print_fn(Sexp *rest) {
                 break;
         }
     } else {
-        Sexp *curr;
-        while ((curr = pop_from_front_list_Sexp(&rest)) != NULL) {
+        Sexp *curr = { 0 };
+        Error *e = pop_from_front_list_Sexp(&rest, &curr);
+        free_Error(&e);
+        while(curr != NULL); {
             switch (curr->type) {
                 case SEXP_STRING:
                     printf("%s ", curr->str);
@@ -36,37 +38,61 @@ Sexp *print_fn(Sexp *rest) {
                     printf("%f ", curr->f);
                     break;
                 case SEXP_LIST:
-                    print_fn(eval(curr));
-                    break;
+                    {
+                        Sexp *eval_res;
+                        e = eval(curr, &eval_res);
+                        free_Error(&e);
+                        print_fn(eval_res, out);
+                        break;
+                    }
             }
         }
     }
-    return create_empty_Sexp();
+    Error *e = create_empty_Sexp(out);
+    free_Error(&e);
+    return NoError;
 }
 
-Sexp *println_fn(Sexp *rest) {
+Error *println_fn(Sexp *rest, Sexp **out) {
+    BOOL one_call = FALSE;
     if (!is_list_Sexp(rest)) {
-        print_fn(rest);
+        print_fn(rest, out);
+        one_call = TRUE;
     } else {
-        Sexp *curr;
-        while ((curr = pop_from_front_list_Sexp(&rest)) != NULL) {
+        Sexp *curr = { 0 };
+        Error *e = pop_from_front_list_Sexp(&rest, &curr);
+        free_Error(&e);
+        while (curr != NULL) {
             if (is_list_Sexp(curr)) {
-                print_fn(eval(curr));
+                Sexp *eval_res = { 0 };
+                e = eval(curr, &eval_res);
+                free_Error(&e);
+                e = print_fn(eval_res, out);
+                free_Error(&e);
             } else {
-                print_fn(curr);
+                e = print_fn(curr, out);
+                free_Error(&e);
             }
+            one_call = TRUE;
+            e = pop_from_front_list_Sexp(&rest, &curr);
+            free_Error(&e);
         }
+    }
+    if (!one_call) {
+        create_empty_Sexp(out);
     }
     printf("\n");
-    return create_empty_Sexp();
+    return NoError;
 }
 
-Sexp *add_fn(Sexp *rest) {
-    Sexp *curr;
+Error *add_fn(Sexp *rest, Sexp **out) {
+    Sexp *curr = { 0 };
     BOOL is_float = FALSE;
     Int int_ret = 0;
     Float float_ret = 0;
-    while ((curr = pop_from_front_list_Sexp(&rest)) != NULL) {
+    Error *e = pop_from_front_list_Sexp(&rest, &curr);
+    free_Error(&e);
+    while (curr != NULL) {
         switch (curr->type) {
             case SEXP_INT:
                 if (is_float) {
@@ -84,7 +110,9 @@ Sexp *add_fn(Sexp *rest) {
                 break;
             case SEXP_LIST:
                 {
-                    Sexp *val = eval(curr);
+                    Sexp *val = { 0 };
+                    e = eval(curr, &val);
+                    free_Error(&e);
                     if (is_int_Sexp(val)) {
                         if (is_float) {
                             float_ret += (Float)val->i;
@@ -101,26 +129,33 @@ Sexp *add_fn(Sexp *rest) {
                 }
                 break;
         }
+        e = pop_from_front_list_Sexp(&rest, &curr);
+        free_Error(&e);
     }
     if (is_float) {
-        return create_float_Sexp(float_ret);
+        e = create_float_Sexp(out, float_ret);
+        free_Error(&e);
     } else {
-        return create_int_Sexp(int_ret);
+        e = create_int_Sexp(out, int_ret);
+        free_Error(&e);
     }
 }
 
-Sexp *eval(Sexp *line) {
-    Sexp *front = pop_from_front_list_Sexp(&line);
+Error *eval(Sexp *line, Sexp **out) {
+    Sexp *front;
+    Error *e = pop_from_front_list_Sexp(&line, &front);
+    free_Error(&e);
     switch (front->type) {
         case SEXP_IDENT:
             if (strcmp(front->name, "println") == 0) {
-                return println_fn(line);
+                e = println_fn(line, out);
             } else if(strcmp(front->name, "print") == 0) {
-                return print_fn(line);
+                e = print_fn(line, out);
             } else if(strcmp(front->name, "+") == 0) {
-                return add_fn(line);
+                e = add_fn(line, out);
             }
             break;
     }
-    return NULL;
+    free_Error(&e);
+    return NoError;
 }

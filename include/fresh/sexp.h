@@ -3,7 +3,8 @@
 
 #include <stdlib.h>
 
-#include"defines.h"
+#include "defines.h"
+#include "error.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,28 +41,28 @@ typedef struct _SexpArray {
 /**
  * SexpArray functions
  */
-extern SexpArray *create_zero_len_SexpArray();
-extern SexpArray *create_SexpArray(size_t size);
+extern Error *create_zero_len_SexpArray(SexpArray **sa);
+extern Error *create_SexpArray(SexpArray **sa, size_t size);
 
-extern void add_to_SexpArray(SexpArray **array, Sexp *elem);
-extern Sexp *pop_front_SexpArray(SexpArray **array);
+extern Error *add_to_SexpArray(SexpArray **array, Sexp *elem);
+extern Error *pop_front_SexpArray(SexpArray **array, Sexp **s);
 
 extern BOOL is_empty_SexpArray(SexpArray *list);
 
-extern void free_SexpArray(SexpArray **list);
+extern Error *free_SexpArray(SexpArray **list);
 
 /**
  * Sexp functions
  */
-extern Sexp *create_empty_Sexp();
-extern Sexp *create_string_Sexp(const String str);
-extern Sexp *create_ident_Sexp(const String name);
-extern Sexp *create_int_Sexp(int i);
-extern Sexp *create_float_Sexp(float f);
-extern Sexp *create_empty_list_Sexp();
-extern Sexp *create_list_Sexp(size_t size);
+extern Error *create_empty_Sexp(Sexp **s);
+extern Error *create_string_Sexp(Sexp **s, const String str);
+extern Error *create_ident_Sexp(Sexp **s, const String name);
+extern Error *create_int_Sexp(Sexp **s, Int i);
+extern Error *create_float_Sexp(Sexp **s, Float f);
+extern Error *create_empty_list_Sexp(Sexp **s);
+extern Error *create_list_Sexp(Sexp **s, size_t size);
 
-extern void add_to_list_Sexp(Sexp **s, Sexp *obj);
+extern Error *add_to_list_Sexp(Sexp **s, Sexp *obj);
 
 extern BOOL is_empty_Sexp(const Sexp *s);
 extern BOOL is_string_Sexp(const Sexp *s);
@@ -71,7 +72,7 @@ extern BOOL is_float_Sexp(const Sexp *s);
 extern BOOL is_list_Sexp(const Sexp *s);
 extern BOOL is_empty_list_Sexp(const Sexp *s);
 
-extern Sexp *pop_from_front_list_Sexp(Sexp **s);
+extern Error *pop_from_front_list_Sexp(Sexp **s, Sexp **out);
 
 extern void free_Sexp(Sexp **s);
 

@@ -9,7 +9,7 @@ extern "C" {
 
 static const char *ident_symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678+-?!<>;:/.";
 
-extern Sexp *parse_line(String line);
+extern Error *parse_line(Sexp **out, String line);
 
 #ifdef __cplusplus
 }

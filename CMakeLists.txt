@@ -8,6 +8,7 @@ project(fresh
     LANGUAGES C)
 
 set(LIB_SOURCES
+    ./src/error.c
     ./src/eval.c
     ./src/parser.c
     ./src/sexp.c)

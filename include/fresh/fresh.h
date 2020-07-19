@@ -1,6 +1,7 @@
 #ifndef __H_FRESH__
 #define __H_FRESH__
 
+#include "error.h"
 #include "defines.h"
 #include "fresh_config.h"
 #include "sexp.h"

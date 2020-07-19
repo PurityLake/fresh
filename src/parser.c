@@ -11,7 +11,8 @@ typedef struct {
     size_t read_to;
 } sexp_with_idx;
 
-sexp_with_idx *parse_string(String line, int pos) {
+Error *parse_string(sexp_with_idx **out, String line, int pos) {
+    Error *e;
     int idx = 0;
     int capacity = 5;
     String str = (String )malloc(sizeof(char) * capacity);
@@ -25,22 +26,23 @@ sexp_with_idx *parse_string(String line, int pos) {
                 if (line[idx - 1] == '\\') {
                     str[--idx] = '"';
                 } else {
-                    sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
-                    swi->read_to = i;
+                    (*out)->read_to = i;
                     str = (String )realloc(str, idx);
                     str[idx] = '\0';
-                    swi->s = create_string_Sexp(str);
+                    e = create_string_Sexp(&(*out)->s,str);
+                    free_Error(&e);
                     free(str);
-                    return swi;
+                    return NoError;
                 }
             }
         } else {
             str[idx] = line[i];
         }
     }
+    return create_Error(NoObj, "Failed to parse string, missing closing '\"'", 0, pos);
 }
 
-void translate_to_ident_or_num(Sexp **s, String str) {
+Error *translate_to_ident_or_num(Sexp **s, String str) {
     BOOL is_int = FALSE;
     BOOL is_float = FALSE;
     int count_decimal = 0;
@@ -59,20 +61,33 @@ void translate_to_ident_or_num(Sexp **s, String str) {
                 break;
             }
         } else {
+            is_int = FALSE;
+            is_float = FALSE;
             break;
         }
     }
+    Error *e;
+    Sexp *out;
     if (is_int) {
-        add_to_list_Sexp(s, create_int_Sexp(atoi(str)));
+        e = create_int_Sexp(&out, atoi(str));
+        free_Error(&e);
+        add_to_list_Sexp(s, out);
     } else if (is_float) {
-        add_to_list_Sexp(s, create_float_Sexp(atof(str)));
+        e = create_float_Sexp(&out, atof(str));
+        free_Error(&e);
+        add_to_list_Sexp(s, out);
     } else {
-        add_to_list_Sexp(s, create_ident_Sexp(str));
+        e = create_ident_Sexp(&out, str);
+        free_Error(&e);
+        add_to_list_Sexp(s, out);
     }
+    return NoError;
 }
 
-sexp_with_idx *parse_Sexp(String line, int pos) {
-    Sexp *s = create_list_Sexp(10);
+Error *parse_Sexp(sexp_with_idx **out, String line, int pos) {
+    Sexp *s;
+    Error *e = create_list_Sexp(&s, 10);
+    /// TODO: add check
     String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
     size_t i;
@@ -83,7 +98,9 @@ sexp_with_idx *parse_Sexp(String line, int pos) {
                 translate_to_ident_or_num(&s, str);
                 idx = 0;
             }
-            sexp_with_idx *swi = parse_Sexp(line, i + 1);
+            sexp_with_idx *swi;
+            Error *e = parse_Sexp(&swi, line, i + 1);
+            free_Error(&e);
             i = swi->read_to;
             add_to_list_Sexp(&s, swi->s);
             free(swi);
@@ -95,9 +112,12 @@ sexp_with_idx *parse_Sexp(String line, int pos) {
             }
             break;
         } else if (line[i] == '"') {
-            sexp_with_idx *swi = parse_string(line, i + 1);
+            sexp_with_idx *swi;
+            Error *e = parse_string(&swi, line, i + 1);
+            free_Error(&e);
             i = swi->read_to;
-            add_to_list_Sexp(&s, swi->s);
+            e = add_to_list_Sexp(&s, swi->s);
+            free_Error(&e);
             free(swi);
         } else {
             if (strchr(ident_symbols, line[i]) != NULL) {
@@ -112,16 +132,18 @@ sexp_with_idx *parse_Sexp(String line, int pos) {
             }
         }
     }
-    sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
-    swi->read_to = i;
-    swi->s = s;
+    (*out)->read_to = i;
+    (*out)->s = s;
     free(str);
-    return swi; 
+    return NoError; 
 }
 
-Sexp *parse_line(String line) {
-    Sexp *s = create_list_Sexp(10);
+Error *parse_line(Sexp **out, String line) {
+    Sexp *s;
+    Error *e = create_list_Sexp(&s, 10);
+    free_Error(&e);
     BOOL first = TRUE;
+    /// TODO: add check
     String str = (String )malloc(sizeof(char) * 100);
     int idx = 0;
     for (size_t i = 0; i < strlen(line); ++i) {
@@ -132,7 +154,9 @@ Sexp *parse_line(String line) {
                     translate_to_ident_or_num(&s, str);
                     idx = 0;
                 }
-                sexp_with_idx *swi = parse_Sexp(line, i + 1);
+                sexp_with_idx *swi = { 0 };
+                Error *e = parse_Sexp(&swi, line, i + 1);
+                free_Error(&e);
                 i = swi->read_to;
                 add_to_list_Sexp(&s, swi->s);
                 free(swi);
@@ -146,7 +170,9 @@ Sexp *parse_line(String line) {
             }
             break;
         } else if (line[i] == '"') {
-            sexp_with_idx *swi = parse_string(line, i + 1);
+            sexp_with_idx *swi;
+            Error *e = parse_string(&swi, line, i + 1);
+            free_Error(&e);
             i = swi->read_to;
             add_to_list_Sexp(&s, swi->s);
             free(swi);
@@ -163,6 +189,7 @@ Sexp *parse_line(String line) {
             }
         }
     }
+    *out = s;
     free(str);
-    return s;
+    return NoError;
 }

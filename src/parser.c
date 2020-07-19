@@ -163,6 +163,10 @@ Error *parse_line(Sexp **out, String line) {
             }
             first = FALSE;
         } else if (line[i] == ')') {
+            if (first) {
+                *out = NULL;
+                return create_Error(NoObj, "First character of an expression must be '(' got ')'", 1, i);
+            }
             if (idx > 0) {
                 str[idx] = '\0';
                 translate_to_ident_or_num(&s, str);
@@ -170,6 +174,10 @@ Error *parse_line(Sexp **out, String line) {
             }
             break;
         } else if (line[i] == '"') {
+            if (first) {
+                *out = NULL;
+                return create_Error(NoObj, "First character of an expression must be '(' got '\"'", 1, i);
+            }
             sexp_with_idx *swi = (sexp_with_idx *)malloc(sizeof(sexp_with_idx));
             Error *e = parse_string(&swi, line, i + 1);
             free_Error(&e);
@@ -177,6 +185,15 @@ Error *parse_line(Sexp **out, String line) {
             add_to_list_Sexp(&s, swi->s);
             free(swi);
         } else {
+            if (first && !isspace(line[i])) {
+                *out = NULL;
+                char *errorMessage = (char *)malloc(sizeof(char) * 128);
+                memset(errorMessage, '\0', 128);
+                size_t len = sprintf(errorMessage, "First character of an expression must be '(' got '%c'", line[i]);
+                Error *e = create_Error(NoObj, errorMessage, 1, i);
+                free(errorMessage);
+                return e;
+            }
             if (strchr(ident_symbols, line[i]) != NULL) {
                 str[idx] = line[i];
                 ++idx;

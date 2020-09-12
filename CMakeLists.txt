@@ -24,11 +24,16 @@ set(HEADERS
 	include/fresh/fresh.h
 	include/fresh/fresh_config.h
 	include/fresh/parser.h
+	include/fresh/posix.h
 	include/fresh/sexp.h)
 
 
 add_executable(freshi ${SOURCES} ${HEADERS})
 add_library(fresh ${LIB_SOURCES})
+
+if(WIN32)
+	option(FRESH_NO_POSIX "Enable POSIX Replacement" ON)
+endif()
 
 target_include_directories(freshi PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(fresh PUBLIC ${PROJECT_SOURCE_DIR}/include)

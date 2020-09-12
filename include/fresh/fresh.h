@@ -7,5 +7,6 @@
 #include "sexp.h"
 #include "parser.h"
 #include "eval.h"
+#include "posix.h"
 
 #endif /* __H_FRESH__ */

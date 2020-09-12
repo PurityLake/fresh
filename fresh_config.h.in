@@ -1,2 +1,4 @@
 #define FRESH_VERSION_MAJOR @fresh_VERSION_MAJOR@
 #define FRESH_VERSION_MINOR @fresh_VERSION_MINOR@
+
+#cmakedefine FRESH_NO_POSIX

@@ -1,2 +1,4 @@
 #define FRESH_VERSION_MAJOR 0
 #define FRESH_VERSION_MINOR 1
+
+#define FRESH_NO_POSIX

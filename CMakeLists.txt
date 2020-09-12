@@ -8,19 +8,28 @@ project(fresh
     LANGUAGES C)
 
 set(LIB_SOURCES
-    ./src/error.c
-    ./src/eval.c
-    ./src/parser.c
-    ./src/sexp.c)
+    src/error.c
+    src/eval.c
+    src/parser.c
+    src/sexp.c)
 
 set(SOURCES
-    "${LIB_SOURCES}"
-    ./src/main.c)
+    ${LIB_SOURCES}
+    src/main.c)
+
+set(HEADERS
+	include/fresh/defines.h
+	include/fresh/error.h
+	include/fresh/eval.h
+	include/fresh/fresh.h
+	include/fresh/fresh_config.h
+	include/fresh/parser.h
+	include/fresh/sexp.h)
 
 
-add_executable(freshi "${SOURCES}")
-add_library(fresh "${LIB_SOURCES}")
+add_executable(freshi ${SOURCES} ${HEADERS})
+add_library(fresh ${LIB_SOURCES})
 
-target_include_directories(freshi PUBLIC "${PROJECT_SOURCE_DIR}/include")
-target_include_directories(fresh PUBLIC "${PROJECT_SOURCE_DIR}/include")
-configure_file(fresh_config.h.in "${PROJECT_SOURCE_DIR}/include/fresh/fresh_config.h")
+target_include_directories(freshi PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(fresh PUBLIC ${PROJECT_SOURCE_DIR}/include)
+configure_file(fresh_config.h.in ${PROJECT_SOURCE_DIR}/include/fresh/fresh_config.h)

@@ -24,7 +24,7 @@ set(HEADERS
 	include/fresh/fresh.h
 	include/fresh/fresh_config.h
 	include/fresh/parser.h
-	include/fresh/posix.h
+	include/fresh/posix_replacement.h
 	include/fresh/sexp.h)
 
 

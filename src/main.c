@@ -28,10 +28,10 @@ int main(int argc, char **argv) {
         e = parse_line(&total, buffer);
         if (!is_Error(e)) {
             free_Error(&e);
-            Sexp *result = { 0 };
+            Sexp *result;
             e = eval(total, &result);
             if (!is_empty_Sexp(result)) {
-                Sexp *r = { 0 };
+				Sexp *r;
                 e = println_fn(result, &r);
                 free_Error(&e);
                 free_Sexp(&r);

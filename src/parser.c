@@ -29,9 +29,8 @@ Error *parse_string(sexp_with_idx **out, String line, int pos) {
                     (*out)->read_to = i;
                     str = (String )realloc(str, idx);
                     str[idx] = '\0';
-                    e = create_string_Sexp(&(*out)->s,str);
+                    e = create_string_Sexp(&(*out)->s, str);
                     free_Error(&e);
-                    free(str);
                     return NoError;
                 }
             }

@@ -251,6 +251,5 @@ void free_Sexp(Sexp **s) {
                 break;
         }
         free(*s);
-        *s = NULL;
     }
 }

@@ -10,7 +10,8 @@ project(fresh
 set(LIB_SOURCES
     src/error.c
     src/eval.c
-    src/parser.c
+	src/parser.c
+	src/scope.c
     src/sexp.c)
 
 set(SOURCES
@@ -25,6 +26,7 @@ set(HEADERS
 	include/fresh/fresh_config.h
 	include/fresh/parser.h
 	include/fresh/posix_replacement.h
+	include/fresh/scope.h
 	include/fresh/sexp.h)
 
 

@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     size_t bufsize = 128;
     size_t characters;
 
-    buffer = (char *)malloc(sizeof(char) * bufsize);
+    buffer = malloc(sizeof *buffer * bufsize);
 
     while (TRUE) {
         memset(buffer, '\0', bufsize);

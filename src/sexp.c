@@ -8,7 +8,7 @@
  * sexp_list functions
  */
 Error *create_zero_len_SexpArray(SexpArray **sa) {
-    *sa = (SexpArray *)malloc(sizeof(SexpArray));
+    *sa = malloc(sizeof **sa);
     if (*sa == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_zero_len_SexpArray: " __FILE__, __LINE__, 0);
     }
@@ -23,7 +23,7 @@ Error *create_SexpArray(SexpArray **sa, size_t size) {
     if (is_Error(e)) {
         return e;
     }
-    (*sa)->sexps = (Sexp **)malloc(sizeof(Sexp *) * size);
+    (*sa)->sexps = malloc(sizeof(*(*sa)->sexps) * size);
     if ((*sa)->sexps == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_SexpArray: " __FILE__, __LINE__, 0);
     }
@@ -39,7 +39,7 @@ Error *add_to_SexpArray(SexpArray **array, Sexp *elem) {
     (*array)->num_elems += 1;
     if ((*array)->num_elems > (*array)->length) {
         (*array)->length += 10;
-        (*array)->sexps = (Sexp **)realloc((*array)->sexps, sizeof(Sexp *) * (*array)->length);
+        (*array)->sexps = realloc((*array)->sexps, sizeof(Sexp*) * (*array)->length);
         if ((*array)->sexps == NULL) {
             return create_Error(NoObj, "Failed to reallocate memory for in add_to_SexpArray: " __FILE__, __LINE__, 0);
         }
@@ -54,7 +54,7 @@ Error *pop_front_SexpArray(SexpArray **array, Sexp **s) {
     }
     if ((*array)->num_elems > 0) {
         *s = (*array)->sexps[0];
-        Sexp **list = (Sexp **)malloc(sizeof(Sexp *) * (*array)->length);
+        Sexp **list = malloc(sizeof *list * (*array)->length);
         if (list == NULL) {
             return create_Error(NoObj, "Failed to allocate memory pop_front_SexpAray: " __FILE__, __LINE__, 0);
         }
@@ -94,7 +94,7 @@ Error *create_empty_Sexp(Sexp **s) {
     if (s == NULL) {
         return create_Error(NoObj, "NULL passed to create_empty_Sexp: " __FILE__, __LINE__, 0);
     }
-    *s = (Sexp *)malloc(sizeof(Sexp));
+    *s = malloc(sizeof **s);
     if (*s == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_empty_Sexp: " __FILE__, __LINE__, 0);
     }
@@ -109,7 +109,7 @@ Error *create_string_Sexp(Sexp **s, const String str) {
     Error *e = create_empty_Sexp(s);
     free_Error(&e);
     size_t size = strlen(str);
-    (*s)->str = (String )malloc(sizeof(char) * size);
+    (*s)->str = malloc(sizeof(char) * size);
     if ((*s)->str == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_string_Sexp: " __FILE__, __LINE__, 0);
     }
@@ -125,7 +125,7 @@ Error *create_ident_Sexp(Sexp **s, const String name) {
     Error *e = create_empty_Sexp(s);
     free_Error(&e);
     size_t size = strlen(name);
-    (*s)->name = (String )malloc(sizeof(char) * size);
+    (*s)->name = malloc(sizeof(char) * size);
     if ((*s)->name == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_string_Sexp: " __FILE__, __LINE__, 0);
     }

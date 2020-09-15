@@ -4,11 +4,11 @@
 #include <string.h>
 
 Error *create_Error(void *s, const char *msg, int lineno, int col) {
-    Error *e = (Error *)malloc(sizeof(Error));
+    Error *e = malloc(sizeof *e);
     e->obj = s;
     
     size_t len = strlen(msg);
-    e->message = (char *)malloc(sizeof(char) * len);
+    e->message = malloc(sizeof(*e->message) * len);
     strcpy(e->message, msg);
 
     e->lineno = lineno;

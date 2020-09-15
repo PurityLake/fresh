@@ -6,7 +6,7 @@ Error *create_function_ScopeEntry(ScopeEntry **se, char *name, FreshFunction fun
 	if (se == NULL) {
 		return create_Error(NoObj, "NULL passed to create_function_ScopEntry: " __FILE__, __LINE__, 0);
 	}
-	*se = malloc(sizeof(ScopeEntry));
+	*se = malloc(sizeof **se);
 	if (*se == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_function_ScopeEntry: " __FILE__, __LINE__, 0);
 	}
@@ -14,7 +14,7 @@ Error *create_function_ScopeEntry(ScopeEntry **se, char *name, FreshFunction fun
 	(*se)->type = SCOPE_FUNCTION;
 	
 	int len = strlen(name);
-	(*se)->name = malloc(sizeof(char) * len);
+	(*se)->name = malloc(sizeof(*(*se)->name) * len);
 	if ((*se)->name == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_function_ScopErntry: " __FILE__, __LINE__, 0);
 	}
@@ -25,7 +25,7 @@ Error *create_sexp_ScopeEntry(ScopeEntry **se, char *name, Sexp *sexp) {
 	if (se == NULL) {
 		return create_Error(NoObj, "NULL passed to create_sexp_ScopEntry: " __FILE__, __LINE__, 0);
 	}
-	*se = malloc(sizeof(ScopeEntry));
+	*se = malloc(sizeof **se);
 	if (*se == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_sexp_ScopeEntry: " __FILE__, __LINE__, 0);
 	}
@@ -33,7 +33,7 @@ Error *create_sexp_ScopeEntry(ScopeEntry **se, char *name, Sexp *sexp) {
 	(*se)->type = SCOPE_SEXP;
 
 	int len = strlen(name);
-	(*se)->name = malloc(sizeof(char) * len);
+	(*se)->name = malloc(sizeof(*(*se)->name) * len);
 	if ((*se)->name == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_sexp_ScopErntry: " __FILE__, __LINE__, 0);
 	}

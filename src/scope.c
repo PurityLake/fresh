@@ -14,8 +14,8 @@ Error *create_function_ScopeEntry(ScopeEntry **se, char *name, FreshFunction fun
 	(*se)->func = func;
 	(*se)->type = SCOPE_FUNCTION;
 	
-	int len = strlen(name);
-	(*se)->name = malloc(sizeof(*(*se)->name) * len);
+	int len = strlen(name) + 1;
+	(*se)->name = malloc(sizeof(char) * len);
 	if ((*se)->name == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_function_ScopErntry: " __FILE__, __LINE__, 0);
 	}
@@ -33,8 +33,8 @@ Error *create_sexp_ScopeEntry(ScopeEntry **se, char *name, Sexp *sexp) {
 	(*se)->sexp = sexp;
 	(*se)->type = SCOPE_SEXP;
 
-	int len = strlen(name);
-	(*se)->name = malloc(sizeof(*(*se)->name) * len);
+	int len = strlen(name) + 1;
+	(*se)->name = malloc(sizeof(char) * len);
 	if ((*se)->name == NULL) {
 		return create_Error(NoObj, "Failed to allocate memory in create_sexp_ScopErntry: " __FILE__, __LINE__, 0);
 	}

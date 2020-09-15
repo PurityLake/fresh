@@ -7,7 +7,7 @@ Error *create_Error(void *s, const char *msg, int lineno, int col) {
     Error *e = malloc(sizeof *e);
     e->obj = s;
     
-    size_t len = strlen(msg);
+    size_t len = strlen(msg) + 1;
     e->message = malloc(sizeof(*e->message) * len);
     strcpy(e->message, msg);
 

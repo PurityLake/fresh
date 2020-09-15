@@ -124,7 +124,7 @@ Error *create_ident_Sexp(Sexp **s, const String name) {
     }
     Error *e = create_empty_Sexp(s);
     free_Error(&e);
-    size_t size = strlen(name);
+    size_t size = strlen(name) + 1;
     (*s)->name = malloc(sizeof(char) * size);
     if ((*s)->name == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_string_Sexp: " __FILE__, __LINE__, 0);

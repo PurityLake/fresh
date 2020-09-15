@@ -86,7 +86,7 @@ Error *translate_to_ident_or_num(Sexp **s, String str) {
 Error *parse_Sexp(sexp_with_idx **out, String line, int pos) {
     Sexp *s;
     Error *e = create_list_Sexp(&s, 10);
-    /// TODO: add check
+    free_Error(&e);
     String str = malloc(sizeof *str * 100);
     int idx = 0;
     size_t i;
@@ -188,7 +188,7 @@ Error *parse_line(Sexp **out, String line) {
                 *out = NULL;
                 char *errorMessage = malloc(sizeof *errorMessage * 128);
                 memset(errorMessage, '\0', 128);
-                size_t len = sprintf(errorMessage, "First character of an expression must be '(' got '%c'", line[i]);
+                sprintf(errorMessage, "First character of an expression must be '(' got '%c'", line[i]);
                 Error *e = create_Error(NoObj, errorMessage, 1, i);
                 free(errorMessage);
                 return e;

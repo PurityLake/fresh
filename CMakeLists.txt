@@ -37,6 +37,12 @@ if(WIN32)
 	option(FRESH_NO_POSIX "Enable POSIX Replacement" ON)
 endif()
 
+if (UNIX)
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
+		set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-Wpedantic -fsanitize=address")
+	endif()
+endif()
+
 target_include_directories(freshi PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(fresh PUBLIC ${PROJECT_SOURCE_DIR}/include)
 configure_file(fresh_config.h.in ${PROJECT_SOURCE_DIR}/include/fresh/fresh_config.h)

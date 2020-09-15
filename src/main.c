@@ -66,5 +66,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    free_Scope(&scope);
+
     return 0;
 }

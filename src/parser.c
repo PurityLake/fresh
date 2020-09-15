@@ -14,7 +14,7 @@ typedef struct {
 Error *parse_string(sexp_with_idx **out, String line, int pos) {
     Error *e;
     int idx = 0;
-    int capacity = 5;
+    int capacity = 32;
     String str = malloc(sizeof *str * capacity);
     for (size_t i = pos; i < strlen(line); ++i, ++idx) {
         if (idx >= capacity) {
@@ -27,7 +27,6 @@ Error *parse_string(sexp_with_idx **out, String line, int pos) {
                     str[--idx] = '"';
                 } else {
                     (*out)->read_to = i;
-                    str = realloc(str, idx);
                     str[idx] = '\0';
                     e = create_string_Sexp(&(*out)->s, str);
                     free_Error(&e);

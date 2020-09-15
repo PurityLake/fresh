@@ -7,6 +7,7 @@
 #include "sexp.h"
 #include "parser.h"
 #include "eval.h"
+#include "scope.h"
 
 #ifdef FRESH_NO_POSIX
 #include "posix_replacement.h"

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-Error *print_fn(Sexp *rest, Sexp **out) {
+Error *print_fn(Scope **s, Sexp *rest, Sexp **out) {
     if (!is_list_Sexp(rest)) {
         switch (rest->type) {
             case SEXP_STRING:
@@ -43,9 +43,9 @@ Error *print_fn(Sexp *rest, Sexp **out) {
                     {
                         Sexp *eval_res;
                         e = create_empty_Sexp(&eval_res);
-                        e = eval(curr, &eval_res);
+                        e = eval(s, curr, &eval_res);
                         free_Error(&e);
-                        print_fn(eval_res, out);
+                        print_fn(s, eval_res, out);
                         free_Sexp(&eval_res);
                     }
                     break;
@@ -60,10 +60,10 @@ Error *print_fn(Sexp *rest, Sexp **out) {
     return NoError;
 }
 
-Error *println_fn(Sexp *rest, Sexp **out) {
+Error *println_fn(Scope **s, Sexp *rest, Sexp **out) {
     BOOL one_call = FALSE;
     if (!is_list_Sexp(rest)) {
-        print_fn(rest, out);
+        print_fn(s, rest, out);
         one_call = TRUE;
     } else {
         Sexp *curr = { 0 };
@@ -74,13 +74,13 @@ Error *println_fn(Sexp *rest, Sexp **out) {
                 Sexp *eval_res;
                 e = create_empty_Sexp(&eval_res);
                 free_Error(&e);
-                e = eval(curr, &eval_res);
+                e = eval(s, curr, &eval_res);
                 free_Error(&e);
-                e = print_fn(eval_res, out);
+                e = print_fn(s, eval_res, out);
                 free_Error(&e);
                 free_Sexp(&eval_res);
             } else {
-                e = print_fn(curr, out);
+                e = print_fn(s, curr, out);
                 free_Error(&e);
             }
             one_call = TRUE;
@@ -95,7 +95,7 @@ Error *println_fn(Sexp *rest, Sexp **out) {
     return NoError;
 }
 
-Error *add_fn(Sexp *rest, Sexp **out) {
+Error *add_fn(Scope **s, Sexp *rest, Sexp **out) {
     Sexp *curr = { 0 };
     BOOL is_float = FALSE;
     Int int_ret = 0;
@@ -121,7 +121,7 @@ Error *add_fn(Sexp *rest, Sexp **out) {
             case SEXP_LIST:
                 {
                     Sexp *val = { 0 };
-                    e = eval(curr, &val);
+                    e = eval(s, curr, &val);
                     free_Error(&e);
                     if (is_int_Sexp(val)) {
                         if (is_float) {
@@ -154,18 +154,20 @@ Error *add_fn(Sexp *rest, Sexp **out) {
     return NoError;
 }
 
-Error *eval(Sexp *line, Sexp **out) {
+Error *eval(Scope **s, Sexp *line, Sexp **out) {
     Sexp *front;
     Error *e = pop_from_front_list_Sexp(&line, &front);
     free_Error(&e);
     switch (front->type) {
         case SEXP_IDENT:
-            if (strcmp(front->name, "println") == 0) {
-                e = println_fn(line, out);
-            } else if(strcmp(front->name, "print") == 0) {
-                e = print_fn(line, out);
-            } else if(strcmp(front->name, "+") == 0) {
-                e = add_fn(line, out);
+            {
+                ScopeEntry *se;
+                e = get_from_Scope(s, front->name, &se);
+                if (!is_Error(e)) {
+                    e = se->func(s, line, out);
+                } else {
+                    return e;
+                }
             }
             break;
         default:

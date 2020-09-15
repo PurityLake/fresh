@@ -1,3 +1,6 @@
+#ifndef __H_FRESH_SCOPE__
+#define __H_FRESH_SCOPE__
+
 #include <stdlib.h>
 
 #include "defines.h"
@@ -8,7 +11,9 @@
 extern "C" {
 #endif
 
-typedef Error* (*FreshFunction)(Sexp*, Sexp**);
+struct Scope;
+
+typedef Error* (*FreshFunction)(struct Scope**, Sexp*, Sexp**);
 
 enum ScopeEntryType {
 	SCOPE_SEXP,
@@ -39,6 +44,15 @@ typedef struct Scope {
 	ScopeEntry **entries;
 } Scope;
 
+extern Error *create_Scope(Scope **s, int capacity, Scope *parent);
+
+extern Error *free_Scope(Scope **s);
+
+extern Error *add_to_Scope(Scope **s, ScopeEntry *entry);
+extern Error *get_from_Scope(Scope **s, char *name, ScopeEntry **out);
+
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* __H_FRESH_SCOPE__ */

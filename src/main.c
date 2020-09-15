@@ -16,6 +16,28 @@ int main(int argc, char **argv) {
 
     buffer = malloc(sizeof *buffer * bufsize);
 
+    Scope *scope;
+    e = create_Scope(&scope, 10, NULL);
+    free_Error(&e);
+
+    ScopeEntry *_print;
+    ScopeEntry *_println;
+    ScopeEntry *_add;
+
+    e = create_function_ScopeEntry(&_print, "print", &print_fn);
+    free_Error(&e);
+    e = create_function_ScopeEntry(&_println, "println", &println_fn);
+    free_Error(&e);
+    e = create_function_ScopeEntry(&_add, "+", &add_fn);
+    free_Error(&e);
+
+    e = add_to_Scope(&scope, _print);
+    free_Error(&e);
+    e = add_to_Scope(&scope, _println);
+    free_Error(&e);
+    e = add_to_Scope(&scope, _add);
+    free_Error(&e);
+
     while (TRUE) {
         memset(buffer, '\0', bufsize);
         printf("> ");
@@ -29,10 +51,10 @@ int main(int argc, char **argv) {
         if (!is_Error(e)) {
             free_Error(&e);
             Sexp *result;
-            e = eval(total, &result);
+            e = eval(&scope, total, &result);
             if (!is_empty_Sexp(result)) {
 				Sexp *r;
-                e = println_fn(result, &r);
+                e = println_fn(&scope, result, &r);
                 free_Error(&e);
                 free_Sexp(&r);
             }

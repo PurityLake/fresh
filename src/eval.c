@@ -13,10 +13,12 @@ Error *print_fn(Sexp *rest, Sexp **out) {
                 printf("%s ", rest->name);
                 break;
             case SEXP_INT:
-                printf("%ld ", rest->i);
+                printf("%lld ", rest->i);
                 break;
             case SEXP_FLOAT:
                 printf("%f ", rest->f);
+                break;
+            default:
                 break;
         }
     } else {
@@ -32,7 +34,7 @@ Error *print_fn(Sexp *rest, Sexp **out) {
                     printf("%s ", curr->name);
                     break;
                 case SEXP_INT:
-                    printf("%ld ", curr->i);
+                    printf("%lld ", curr->i);
                     break;
                 case SEXP_FLOAT:
                     printf("%f ", curr->f);
@@ -45,8 +47,9 @@ Error *print_fn(Sexp *rest, Sexp **out) {
                         free_Error(&e);
                         print_fn(eval_res, out);
                         free_Sexp(&eval_res);
-                        break;
                     }
+                    break;
+                default: break;
             }
             e = pop_from_front_list_Sexp(&rest, &curr);
             free_Error(&e);
@@ -135,6 +138,8 @@ Error *add_fn(Sexp *rest, Sexp **out) {
                     }
                 }
                 break;
+            default:
+                break;
         }
         e = pop_from_front_list_Sexp(&rest, &curr);
         free_Error(&e);
@@ -146,6 +151,7 @@ Error *add_fn(Sexp *rest, Sexp **out) {
         e = create_int_Sexp(out, int_ret);
         free_Error(&e);
     }
+    return NoError;
 }
 
 Error *eval(Sexp *line, Sexp **out) {
@@ -161,6 +167,8 @@ Error *eval(Sexp *line, Sexp **out) {
             } else if(strcmp(front->name, "+") == 0) {
                 e = add_fn(line, out);
             }
+            break;
+        default:
             break;
     }
     free_Error(&e);

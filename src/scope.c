@@ -51,6 +51,7 @@ Error *free_ScopeEntry(ScopeEntry **se) {
 		}
 		free(*se);
 	}
+	return NoError;
 }
 
 BOOL is_function_ScopeEntry(const ScopeEntry *se) {

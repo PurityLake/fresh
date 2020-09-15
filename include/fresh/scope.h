@@ -36,7 +36,7 @@ typedef struct Scope {
 	int size;
 	int capacity;
 	struct Scope *parent;
-	ScopeEntry **entries
+	ScopeEntry **entries;
 } Scope;
 
 #ifdef __cplusplus

@@ -55,15 +55,17 @@ Error *print_fn(Scope **s, Sexp *rest, Sexp **out) {
             free_Error(&e);
         }
     }
-    Error *e = create_empty_Sexp(out);
-    free_Error(&e);
+	if (out != NULL) {
+		Error *e = create_empty_Sexp(out);
+		free_Error(&e);
+	}
     return NoError;
 }
 
 Error *println_fn(Scope **s, Sexp *rest, Sexp **out) {
     BOOL one_call = FALSE;
     if (!is_list_Sexp(rest)) {
-        print_fn(s, rest, out);
+        print_fn(s, rest, NULL);
         one_call = TRUE;
     } else {
         Sexp *curr = { 0 };
@@ -76,21 +78,20 @@ Error *println_fn(Scope **s, Sexp *rest, Sexp **out) {
                 free_Error(&e);
                 e = eval(s, curr, &eval_res);
                 free_Error(&e);
-                e = print_fn(s, eval_res, out);
+                e = print_fn(s, eval_res, NULL);
                 free_Error(&e);
                 free_Sexp(&eval_res);
             } else {
-                e = print_fn(s, curr, out);
+                e = print_fn(s, curr, NULL);
                 free_Error(&e);
             }
-            one_call = TRUE;
+			one_call = TRUE;
+			free_Sexp(&curr);
             e = pop_from_front_list_Sexp(&rest, &curr);
             free_Error(&e);
         }
     }
-    if (!one_call) {
-        create_empty_Sexp(out);
-    }
+    create_empty_Sexp(out);
     printf("\n");
     return NoError;
 }
@@ -141,6 +142,7 @@ Error *add_fn(Scope **s, Sexp *rest, Sexp **out) {
             default:
                 break;
         }
+		free_Sexp(&curr);
         e = pop_from_front_list_Sexp(&rest, &curr);
         free_Error(&e);
     }
@@ -166,6 +168,7 @@ Error *eval(Scope **s, Sexp *line, Sexp **out) {
                 if (!is_Error(e)) {
                     e = se->func(s, line, out);
                 } else {
+					free_Sexp(&front);
                     return e;
                 }
             }
@@ -173,6 +176,7 @@ Error *eval(Scope **s, Sexp *line, Sexp **out) {
         default:
             break;
     }
+	free_Sexp(&front);
     free_Error(&e);
     return NoError;
 }

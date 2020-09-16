@@ -129,7 +129,7 @@ Error *create_ident_Sexp(Sexp **s, const String name) {
     if ((*s)->name == NULL) {
         return create_Error(NoObj, "Failed to allocate memory in create_string_Sexp: " __FILE__, __LINE__, 0);
     }
-    strcpy((*s)->str, name);
+    strcpy((*s)->name, name);
     (*s)->type = SEXP_IDENT;
     return NoError;
 }

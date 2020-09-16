@@ -52,6 +52,7 @@ int main(int argc, char **argv) {
             free_Error(&e);
             Sexp *result;
             e = eval(&scope, total, &result);
+			free_Error(&e);
             if (!is_empty_Sexp(result)) {
 				Sexp *r;
                 e = println_fn(&scope, result, &r);
@@ -67,6 +68,7 @@ int main(int argc, char **argv) {
     }
 
     free_Scope(&scope);
+	free(buffer);
 
     return 0;
 }

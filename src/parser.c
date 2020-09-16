@@ -167,7 +167,7 @@ Error *parse_line(Sexp **out, String line) {
             }
             if (idx > 0) {
                 str[idx] = '\0';
-                translate_to_ident_or_num(&s, str);
+				translate_to_ident_or_num(&s, str);
                 idx = 0;
             }
             break;
@@ -190,6 +190,8 @@ Error *parse_line(Sexp **out, String line) {
                 sprintf(errorMessage, "First character of an expression must be '(' got '%c'", line[i]);
                 Error *e = create_Error(NoObj, errorMessage, 1, i);
                 free(errorMessage);
+				free_Sexp(&s);
+				free(str);
                 return e;
             }
             if (strchr(ident_symbols, line[i]) != NULL) {

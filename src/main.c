@@ -14,7 +14,11 @@ int main(int argc, char **argv) {
     size_t bufsize = 128;
     size_t characters;
 
-    buffer = malloc(sizeof *buffer * bufsize);
+    buffer = malloc(sizeof(*buffer) * bufsize);
+    if (buffer == NULL)
+    {
+        return 1;
+    }
 
     Scope *scope;
     e = create_Scope(&scope, 10, NULL);
@@ -39,7 +43,7 @@ int main(int argc, char **argv) {
     free_Error(&e);
 
     while (TRUE) {
-        memset(buffer, '\0', bufsize);
+        memset(buffer, 0, bufsize);
         printf("> ");
         characters = getline(&buffer, &bufsize, stdin);
         buffer[characters-1] = '\0';

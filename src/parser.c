@@ -11,7 +11,7 @@ typedef struct {
     size_t read_to;
 } sexp_with_idx;
 
-Error *parse_string(sexp_with_idx **out, String line, int pos) {
+Error *parse_string(sexp_with_idx **out, String line, size_t pos) {
     Error *e;
     int idx = 0;
     int capacity = 32;
@@ -39,14 +39,14 @@ Error *parse_string(sexp_with_idx **out, String line, int pos) {
         }
     }
     free(str);
-    return create_Error(NoObj, "Failed to parse string, missing closing '\"'", 0, pos);
+    return create_Error(NoObj, "Failed to parse string, missing closing '\"'", 0, (int)pos);
 }
 
 Error *translate_to_ident_or_num(Sexp **s, String str) {
     BOOL is_int = FALSE;
     BOOL is_float = FALSE;
     int count_decimal = 0;
-    for (int i = 0; i < strlen(str); ++i) {
+    for (size_t i = 0; i < strlen(str); ++i) {
         if (isdigit(str[i])) {
             if (!is_float) {
                 is_int = TRUE;
@@ -84,7 +84,7 @@ Error *translate_to_ident_or_num(Sexp **s, String str) {
     return NoError;
 }
 
-Error *parse_Sexp(sexp_with_idx **out, String line, int pos) {
+Error *parse_Sexp(sexp_with_idx **out, String line, size_t pos) {
     Sexp *s;
     Error *e = create_list_Sexp(&s, 10);
     free_Error(&e);
@@ -165,7 +165,7 @@ Error *parse_line(Sexp **out, String line) {
         } else if (line[i] == ')') {
             if (first) {
                 *out = NULL;
-                return create_Error(NoObj, "First character of an expression must be '(' got ')'", 1, i);
+                return create_Error(NoObj, "First character of an expression must be '(' got ')'", 1, (int)i);
             }
             if (idx > 0) {
                 str[idx] = '\0';
@@ -176,7 +176,7 @@ Error *parse_line(Sexp **out, String line) {
         } else if (line[i] == '"') {
             if (first) {
                 *out = NULL;
-                return create_Error(NoObj, "First character of an expression must be '(' got '\"'", 1, i);
+                return create_Error(NoObj, "First character of an expression must be '(' got '\"'", 1, (int)i);
             }
             sexp_with_idx *swi = malloc(sizeof *swi);
             Error *e = parse_string(&swi, line, i + 1);
@@ -190,7 +190,7 @@ Error *parse_line(Sexp **out, String line) {
                 char *errorMessage = malloc(sizeof *errorMessage * 128);
                 memset(errorMessage, '\0', 128);
                 sprintf(errorMessage, "First character of an expression must be '(' got '%c'", line[i]);
-                Error *e = create_Error(NoObj, errorMessage, 1, i);
+                Error *e = create_Error(NoObj, errorMessage, 1, (int)i);
                 free(errorMessage);
 				free_Sexp(&s);
 				free(str);

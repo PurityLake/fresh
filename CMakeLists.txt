@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
@@ -34,6 +34,7 @@ add_executable(freshi ${SOURCES} ${HEADERS})
 add_library(fresh ${LIB_SOURCES})
 
 if(WIN32)
+	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 	option(FRESH_NO_POSIX "Enable POSIX Replacement" ON)
 endif()
 
